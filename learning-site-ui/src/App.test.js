@@ -2,9 +2,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import App from './App';
 import Post from './Post';
-import * as hub from './ContentHub';
+import * as hub from './contentFetcher';
 
-jest.mock('./ContentHub');
+jest.mock('./contentFetcher');
 
 describe('App', () => {
   it('always renders Post', () => {

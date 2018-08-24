@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Post from './Post';
-import * as hub from './ContentHub';
+import * as contentFetcher from './contentFetcher';
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const post = await hub.findPost();
+    const post = await contentFetcher.findPost();
     this.setState({post});
   }
 
