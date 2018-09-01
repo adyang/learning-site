@@ -41,10 +41,62 @@ nvm install node
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -q couchdb
     EOF
     ```
+4. Install PM2 and configure it to startup automatically on server restart
+```
+npm install pm2 -g
+
+pm2 startup
+
+sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v10.9.0/bin /home/ubuntu/.nvm/versions/node/v10.9.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+```
+Or alternatively
+```
+pm2 startup | tail -1 | bash
+```
+5. Install and configure Nginx
+    - Install Nginx
+    ```
+    sudo apt-get install nginx
+    ```
+    - Open inbound HTTP port 80 on AWS Console
+    - Remove default config
+    ```
+    sudo rm /etc/nginx/sites-enabled/default
+    ```
+    - Create config file
+    ```
+    sudo vim /etc/nginx/sites-available/learning-site 
+    ```
+    - With the following contents:
+    ```
+    server {
+        listen 80;
+        server_name localhost;
+        location / {
+            proxy_set_header  X-Real-IP  $remote_addr;
+            proxy_set_header  Host       $http_host;
+            proxy_pass        http://127.0.0.1:5000;
+        }
+    }
+    ```
+    - Link config to sites-enabled
+    ```
+    sudo ln -s /etc/nginx/sites-available/learning-site /etc/nginx/sites-enabled/learning-site
+    ```
+    - Restart Nginx
+    ```
+    sudo service nginx restart
+    ```
+    - Ensure/ enable startup on boot
+    ```
+    systemctl is-enabled nginx
+
+    sudo systemctl enable nginx
+    ```
 
 ## Deployment Steps
 1. Clone repository from GitHub
-```
+``` 
 git clone https://github.com/adyang/learning-site.git
 ```
 2. Build/ optimise for production
@@ -63,6 +115,15 @@ npm run build
     ```
 4. Start server
 ```
-npm start???
-or consider PM2???
+pm2 start npm --name "learning-site" -- start
+```
+5. Save running process (In case for manual restarts later with 'pm2 resurrect'???)
+```
+pm2 save
+```
+
+## Misc
+1. Update packages:
+```
+sudo apt-get update && sudo apt-get upgrade && sudo apt-get dist-upgrade
 ```
