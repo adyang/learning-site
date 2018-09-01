@@ -8,6 +8,8 @@ const app = require('../content-hub/app');
 const debug = require('debug')('learning-site:content-hub');
 const http = require('http');
 
+console.log('NODE_ENV =', process.env.NODE_ENV);
+
 /**
  * Get port from environment and store in Express.
  */
