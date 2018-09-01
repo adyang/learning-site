@@ -113,11 +113,12 @@ npm run build
     ```
     curl -i -X PUT localhost:5984/posts --cookie AuthSession=your-auth-session-token
     ```
-4. Start server
+4. Start server (Using pm2 ecosystem.config.js in project root)
 ```
-pm2 start npm --name "learning-site" -- start
+cd learning-site/
+pm2 start
 ```
-5. Save running process (In case for manual restarts later with 'pm2 resurrect'???)
+5. Save running process to ensure correct state when server reboots
 ```
 pm2 save
 ```
