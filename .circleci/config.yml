@@ -21,7 +21,7 @@ jobs:
             sudo apt-get install apt-transport-https
             sudo apt-get update
             echo "couchdb couchdb/mode select none" | sudo debconf-set-selections
-            DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes couchdb
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
 
       - checkout
       - run:
