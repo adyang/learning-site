@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: update-npm
-          command: npm install -g npm
+          command: sudo npm install -g npm
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
