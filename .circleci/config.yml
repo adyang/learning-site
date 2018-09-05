@@ -23,8 +23,10 @@ jobs:
             echo "couchdb couchdb/mode select none" | sudo debconf-set-selections
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
       - run:
-          name: Ensure CouchDB is up
-          command: curl --fail http://localhost:5984/_up
+          name: Start CouchDB
+          command: |
+            sudo -i -u couchdb /home/couchdb/bin/couchdb
+            curl --fail http://localhost:5984/_up
       - checkout
       - run:
           name: update-npm
