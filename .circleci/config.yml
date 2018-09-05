@@ -3,8 +3,25 @@ jobs:
   build:
     working_directory: ~/learning-site
     docker:
-      - image: circleci/node:10.9.0
+      - image: circleci/node:10.9.0-stretch
     steps:
+      - run:
+          name: Enable Apache CouchDB package repository
+          command: |
+            (distribution=stretch; echo "deb https://apache.bintray.com/couchdb-deb ${distribution} main") \
+            | sudo tee -a /etc/apt/sources.list
+      - run:
+          name: Install CouchDB package repository key
+          command: |
+            curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc \
+            | sudo apt-key add -
+      - run:
+          name: Install CouchDB
+          command: |
+            sudo apt-get update
+            echo "couchdb couchdb/mode select none" | debconf-set-selections
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes couchdb
+
       - checkout
       - run:
           name: update-npm
