@@ -25,7 +25,9 @@ jobs:
       - run:
           name: Start CouchDB
           command: |
-            /opt/couchdb/bin/couchdb
+            ps -ef | grep couchdb
+            sudo systemctl restart couchdb
+            ps -ef | grep couchdb
             curl --fail http://localhost:5984/_up
       - checkout
       - run:
