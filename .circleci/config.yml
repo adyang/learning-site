@@ -54,7 +54,7 @@ jobs:
           command: npm test && npm run test:ui
       - run:
           name: run-acceptance-tests
-          command: npm run test:ci-acceptance
+          command: npm run build:ui && npm run test:ci-acceptance
       - run: npm build
       - run:
           name: package-app
