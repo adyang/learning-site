@@ -29,7 +29,9 @@ jobs:
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
       - run:
           name: Ensure CouchDB is started
-          command: curl --fail http://localhost:5984/_up
+          command: |
+            timeout 5 bash -c 'until $(curl --output /dev/null --silent --fail http://localhost:5984/_up); do sleep 0.5; done' \
+            || curl --fail http://localhost:5984/_up
       - checkout
       - run:
           name: update-npm
