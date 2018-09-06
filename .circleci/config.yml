@@ -64,10 +64,9 @@ jobs:
       - run:
           name: run-acceptance-tests
           command: npm run build:ui && npm run test:ci-acceptance
-      - run: npm build
+      - run: npm run build
       - run:
           name: package-app
           command: |
             cd ..
-            tar -zcvf learning-site.tar.gz learning-site/
-            ls -hl
+            tar -zcf learning-site.tar.gz learning-site/
