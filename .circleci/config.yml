@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Start CouchDB
           command: |
-            sudo -i -u couchdb /home/couchdb/bin/couchdb
+            /opt/couchdb/bin/couchdb
             curl --fail http://localhost:5984/_up
       - checkout
       - run:
