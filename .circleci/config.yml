@@ -53,6 +53,9 @@ jobs:
           name: run-tests
           command: npm test && npm run test:ui
       - run:
+          name: install-chromium-dependencies-for-test
+          command: sudo apt-get install libxtst6
+      - run:
           name: run-acceptance-tests
           command: npm run build:ui && npm run test:ci-acceptance
       - run: npm build
