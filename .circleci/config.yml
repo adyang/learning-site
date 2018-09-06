@@ -6,6 +6,11 @@ jobs:
       - image: circleci/node:10.9.0-stretch
     steps:
       - run:
+          name: Workaround 'invoke-rc.d: policy-rc.d denied execution of start'
+          command: |
+            sed -i 's/^exit 101$/exit 0/' /usr/sbin/policy-rc.d
+            cat /usr/sbin/policy-rc.d
+      - run:
           name: Enable Apache CouchDB package repository
           command: |
             (distribution=stretch; echo "deb https://apache.bintray.com/couchdb-deb ${distribution} main") \
@@ -23,10 +28,8 @@ jobs:
             echo "couchdb couchdb/mode select none" | sudo debconf-set-selections
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
       - run:
-          name: Start CouchDB
-          command: |
-            cat /usr/sbin/policy-rc.d
-            curl --fail http://localhost:5984/_up
+          name: Ensure CouchDB is started
+          command: curl --fail http://localhost:5984/_up
       - checkout
       - run:
           name: update-npm
