@@ -25,9 +25,7 @@ jobs:
       - run:
           name: Start CouchDB
           command: |
-            ps -ef | grep couchdb
-            sudo systemctl restart couchdb
-            ps -ef | grep couchdb
+            cat /usr/sbin/policy-rc.d
             curl --fail http://localhost:5984/_up
       - checkout
       - run:
