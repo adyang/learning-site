@@ -1,4 +1,5 @@
 const nano = require('nano')('http://localhost:5984');
+const pageUrl = `http://localhost:${process.env.CI ? 5000 : 3000}`;
 let testDb;
 
 beforeEach(async () => {
@@ -27,7 +28,7 @@ describe('Acceptance Test Criteria', () => {
   }
 
   async function showsContentOnPage(expected) {
-    await page.goto('http://localhost:3000');
+    await page.goto(pageUrl);
     await expect(page).toMatch(expected);
   }
 });

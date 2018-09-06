@@ -52,3 +52,6 @@ jobs:
       - run:
           name: run-tests
           command: npm test && npm run test:ui
+      - run:
+          name: run-acceptance-tests
+          command: npm run test:ci-acceptance

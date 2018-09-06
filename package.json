@@ -8,7 +8,8 @@
     "build:ui": "cd learning-site-ui && npm install && npm run build",
     "test": "jest content-hub",
     "test:ui": "cd learning-site-ui && CI=true npm test",
-    "test:acceptance": "jest -c acceptance-test/jest.config.js"
+    "test:acceptance": "jest -c acceptance-test/jest.config.js",
+    "test:ci-acceptance": "CI=true start-server-and-test :5000 test:acceptance"
   },
   "dependencies": {
     "debug": "~2.6.9",
@@ -21,6 +22,7 @@
     "jest": "^23.5.0",
     "jest-puppeteer": "^3.3.1",
     "puppeteer": "^1.7.0",
+    "start-server-and-test": "^1.7.1",
     "supertest": "^3.1.0"
   }
 }
