@@ -1,4 +1,4 @@
-# Instance Configuration & Deployment Steps
+# Instance/ User Configuration & Deployment Steps
 
 ## Instance Configuration/ Setup
 1. Install nvm
@@ -42,17 +42,17 @@ nvm install node
     EOF
     ```
 4. Install PM2 and configure it to startup automatically on server restart
-```
-npm install pm2 -g
+    ```
+    npm install pm2 -g
 
-pm2 startup
+    pm2 startup
 
-sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v10.9.0/bin /home/ubuntu/.nvm/versions/node/v10.9.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-```
-Or alternatively
-```
-pm2 startup | tail -1 | bash
-```
+    sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v10.9.0/bin /home/ubuntu/.nvm/versions/node/v10.9.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+    ```
+- Or alternatively:
+    ```
+    pm2 startup | tail -1 | bash
+    ```
 5. Install and configure Nginx
     - Install Nginx
     ```
@@ -93,6 +93,59 @@ pm2 startup | tail -1 | bash
 
     sudo systemctl enable nginx
     ```
+
+## Configure App User
+1. Create app user
+```
+sudo adduser app-user --disabled-password --gecos ""
+```
+2. Add app user to app group
+```
+sudo addgroup app
+sudo usermod -a -G app app-user
+```
+3. Change group and permissions of deployment directory
+```
+sudo chgrp app /var/www
+sudo chmod ug+rwx /var/www
+```
+
+## Configure Deployment User
+1. Create deploy user
+```
+sudo adduser deploy-user --disabled-password --gecos ""
+```
+2. Add deploy user to app group
+```
+sudo usermod -a -G app deploy-user
+```
+3. Create folder and file for SSH authorized keys
+```
+sudo su deploy-user
+
+cd
+mkdir .ssh && chmod 700 .ssh
+touch .ssh/authorized_keys && chmod 600 .ssh/authorized_keys
+```
+4. On your **local machine**, generate a new key pair
+```
+ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/private-key-file-name -C "comment-at-end-of-public-key-file"
+```
+5. Copy the public key (by default it is the private key file appended with '.pub')
+```
+cat ~/.ssh/private-key-file-name.pub | pbcopy
+```
+6. On the instance, as deploy-user
+    - Run
+    ```
+    cat >> ~/.ssh/authorized_keys
+    ```
+    - Paste copied public key into cat prompt
+    - Press enter and Ctrl + D to end input and save public key into file
+7. On **local machine**, verify that SSH works
+```
+ssh -i ~/.ssh/private-key-file-name deploy-user@ec2-instance-hostname
+```
 
 ## Deployment Steps
 1. Clone repository from GitHub
