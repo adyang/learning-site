@@ -1,17 +1,38 @@
 # Instance/ User Configuration & Deployment Steps
 
 ## Instance Configuration/ Setup
-1. Install nvm
-```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+1. Install NVM, Node and PM2 on app user
+    - Change to app user
+    ```
+    sudo su - app-user
+    ```
+    - Install nvm
+    ```
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 
-source ~/.bashrc
-```
-2. Install NodeJS
-```
-nvm install node
-```
-3. Install CouchDB
+    source ~/.bashrc
+    ```
+    - Install NodeJS
+    ```
+    nvm install node
+    ```
+    - Install PM2 and configure it to startup automatically on server restart
+    ```
+    npm install pm2 -g
+
+    pm2 startup
+    # Copy command from output
+
+    exit    # Change back to user with sudo privileges
+
+    # Run copied command
+    sudo env PATH=$PATH:/home/app-user/.nvm/versions/node/v10.10.0/bin /home/app-user/.nvm/versions/node/v10.10.0/lib/node_modules/pm2/bin/pm2 startup systemd -u app-user --hp /home/app-user
+    ```
+    - Or alternatively:
+    ```
+    sudo -u app-user -i bash -i -c 'pm2 startup | tail -1' | bash
+    ```
+2. Install CouchDB
     - Enable Apache CouchDB package repository
     ```
     (distribution=xenial; echo "deb https://apache.bintray.com/couchdb-deb ${distribution} main") \
@@ -41,19 +62,7 @@ nvm install node
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -q couchdb
     EOF
     ```
-4. Install PM2 and configure it to startup automatically on server restart
-    ```
-    npm install pm2 -g
-
-    pm2 startup
-
-    sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v10.9.0/bin /home/ubuntu/.nvm/versions/node/v10.9.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-    ```
-- Or alternatively:
-    ```
-    pm2 startup | tail -1 | bash
-    ```
-5. Install and configure Nginx
+3. Install and configure Nginx
     - Install Nginx
     ```
     sudo apt-get install nginx
