@@ -70,3 +70,8 @@ jobs:
           command: |
             cd ..
             tar -zcf learning-site.tar.gz learning-site/
+      - run:
+          name: deploy-app
+          command: |
+            pwd
+            scp ~/learning-site.tar.gz  $SSH_USER@$SSH_HOST:~
