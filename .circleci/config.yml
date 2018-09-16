@@ -74,6 +74,9 @@ jobs:
           fingerprints:
             - "d6:68:4a:36:93:56:43:55:e7:28:a5:38:ea:3f:32:7b"
       - run:
+          name: add-ssh-host-public-key-to-known-hosts
+          command: echo "$SSH_HOST $SSH_HOST_PUB_KEY_TYPE $SSH_HOST_PUB_KEY" >> ~/.ssh/known_hosts
+      - run:
           name: deploy-app
           command: |
             pwd
