@@ -77,4 +77,6 @@ jobs:
           name: deploy-app
           command: |
             pwd
+            ls -la ~/.ssh
+            cat ~/.ssh/known_hosts
             scp ~/learning-site.tar.gz  $SSH_USER@$SSH_HOST:~
