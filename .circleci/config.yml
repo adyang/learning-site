@@ -24,7 +24,7 @@ jobs:
           name: Install CouchDB
           command: |
             sudo apt-get install apt-transport-https
-            sudo apt-get update
+            sudo apt-get update && sudo apt-get upgrade && sudo apt-get dist-upgrade
             echo "couchdb couchdb/mode select none" | sudo debconf-set-selections
             DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
       - run:
