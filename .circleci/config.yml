@@ -70,6 +70,9 @@ jobs:
           command: |
             cd ..
             tar -zcf learning-site.tar.gz learning-site/
+      - add_ssh_keys:
+          fingerprints:
+            - "d6:68:4a:36:93:56:43:55:e7:28:a5:38:ea:3f:32:7b"
       - run:
           name: deploy-app
           command: |
