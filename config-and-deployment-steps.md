@@ -6,11 +6,11 @@
     ```
     sudo su - app-user
     ```
-    - Install nvm
+    - Install nvm (using ~/.profile for use in non-interactive, login shell)
     ```
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | PROFILE=~/.profile bash
 
-    source ~/.bashrc
+    source ~/.profile
     ```
     - Install NodeJS
     ```
@@ -128,7 +128,16 @@ sudo adduser deploy-user --disabled-password --gecos ""
 ```
 sudo usermod -a -G app deploy-user
 ```
-3. Create folder and file for SSH authorized keys
+3. Give deploy user permission to run commands as users in app group
+    - Create new sudoers file:
+    ```
+    sudo visudo -f /etc/sudoers.d/01-deploy-user
+    ```
+    - Add permissions into file e.g.:
+    ```
+    deploy-user ALL=(%app) NOPASSWD:ALL
+    ```
+4. Create folder and file for SSH authorized keys
 ```
 sudo su deploy-user
 
@@ -136,22 +145,22 @@ cd
 mkdir .ssh && chmod 700 .ssh
 touch .ssh/authorized_keys && chmod 600 .ssh/authorized_keys
 ```
-4. On your **local machine**, generate a new key pair
+5. On your **local machine**, generate a new key pair
 ```
 ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/private-key-file-name -C "comment-at-end-of-public-key-file"
 ```
-5. Copy the public key (by default it is the private key file appended with '.pub')
+6. Copy the public key (by default it is the private key file appended with '.pub')
 ```
 cat ~/.ssh/private-key-file-name.pub | pbcopy
 ```
-6. On the instance, as deploy-user
+7. On the instance, as deploy-user
     - Run
     ```
     cat >> ~/.ssh/authorized_keys
     ```
     - Paste copied public key into cat prompt
     - Press enter and Ctrl + D to end input and save public key into file
-7. On **local machine**, verify that SSH works
+8. On **local machine**, verify that SSH works
 ```
 ssh -i ~/.ssh/private-key-file-name deploy-user@ec2-instance-hostname
 ```
