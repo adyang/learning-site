@@ -79,7 +79,8 @@ jobs:
       - run:
           name: copy-deploy-scripts-to-remote
           command: |
-            rsync -avp --progress --exclude='www' bin/ learning-site-bin
+            shopt -s extglob
+            mkdir -p learning-site-bin && cp -R bin/!(www) learning-site-bin
             chmod +x learning-site-bin/*
             scp -rp learning-site-bin $SSH_USER@$SSH_HOST:/tmp
       - run:
