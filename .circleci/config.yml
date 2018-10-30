@@ -89,3 +89,6 @@ jobs:
             echo "$COUCHDB_PASS" | ssh $SSH_USER@$SSH_HOST /tmp/learning-site-bin/configure-db
             scp ~/learning-site.tar.gz  $SSH_USER@$SSH_HOST:/tmp
             ssh $SSH_USER@$SSH_HOST /tmp/learning-site-bin/deploy
+      - run:
+          name: smoke-test
+          command: curl --fail $SSH_HOST
