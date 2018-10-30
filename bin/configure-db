@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "Ensure required databases are created..."
+
+couchdb_pass=$(cat -)
+result=$(echo "name=admin&password=$couchdb_pass" \
+    | curl --cookie-jar - --silent --show-error --output /dev/null \
+      -X POST localhost:5984/_session -d @- \
+    | curl --cookie @- --write-out %{http_code} --silent --show-error --output /tmp/couchdb-curl-out \
+      -X PUT localhost:5984/posts)
+
+if (( $? > 0 )); then exit $?; fi
+
+if (( result != 201 && result != 412 )); then
+    echo "Error in database creation request!" >&2
+    cat /tmp/couchdb-curl-out >&2
+    exit 1
+fi
+
+echo "Required databases created:"
+curl localhost:5984/_all_dbs

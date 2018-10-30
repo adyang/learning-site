@@ -86,5 +86,6 @@ jobs:
       - run:
           name: deploy-app
           command: |
+            echo "$COUCHDB_PASS" | ssh $SSH_USER@$SSH_HOST /tmp/learning-site-bin/configure-db
             scp ~/learning-site.tar.gz  $SSH_USER@$SSH_HOST:/tmp
-            ssh $SSH_USER@$SSH_HOST '/tmp/learning-site-bin/deploy'
+            ssh $SSH_USER@$SSH_HOST /tmp/learning-site-bin/deploy
