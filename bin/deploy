@@ -1,6 +1,7 @@
 #!/bin/bash
 
+echo -e "\n**** Begin deployment of learning-site ****"
+
 sudo -u learning-site -H tar -zxf /tmp/learning-site.tar.gz --directory /var/www
 sudo -u learning-site -H -i bash -c 'cd /var/www/learning-site && pm2 start'
 sudo -u learning-site -H -i pm2 save
-

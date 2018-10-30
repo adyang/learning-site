@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo -e "\n*** Configure CouchDB ***"
 echo "Ensure required databases are created..."
 
 couchdb_pass=$(cat -)
