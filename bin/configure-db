@@ -18,4 +18,4 @@ if (( result != 201 && result != 412 )); then
 fi
 
 echo "Required databases created:"
-curl localhost:5984/_all_dbs
+curl --silent --show-error localhost:5984/_all_dbs
