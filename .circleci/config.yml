@@ -77,7 +77,13 @@ jobs:
           name: add-ssh-host-public-key-to-known-hosts
           command: echo "$SSH_HOST $SSH_HOST_PUB_KEY_TYPE $SSH_HOST_PUB_KEY" >> ~/.ssh/known_hosts
       - run:
+          name: copy-deploy-scripts-to-remote
+          command: |
+            rsync -avp --progress --exclude='www' bin/ learning-site-bin
+            chmod +x learning-site-bin/*
+            scp -rp learning-site-bin $SSH_USER@$SSH_HOST:/tmp
+      - run:
           name: deploy-app
           command: |
             scp ~/learning-site.tar.gz  $SSH_USER@$SSH_HOST:/tmp
-            ssh $SSH_USER@$SSH_HOST 'bash -s' < bin/deploy
+            ssh $SSH_USER@$SSH_HOST '/tmp/learning-site-bin/deploy'
