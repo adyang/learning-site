@@ -19,16 +19,31 @@ async function destroy(dbName) {
 
 describe('Acceptance Test Criteria', () => {
   it('should show single TIL content on page', async () => {
-    await insertIntoContentStore("TIL Content");
-    await showsContentOnPage("TIL Content");
+    await insertIntoContentStore({ content: "TIL Content" });
+
+    await page.goto(pageUrl);
+
+    await expect(page).toMatch('TIL Content');
   });
 
-  async function insertIntoContentStore(content) {
-    await testDb.insert({content: content});
+  it('should show TIL last edited date and category', async () => {
+    const content = "# Title\n```\nTIL Code\n```\n";
+    await insertIntoContentStore(
+      { content, category: "category", lastEditedDate: "2018-11-11" });
+
+    await page.goto(pageUrl);
+
+    await showsElementOnPage('.content h1', 'Title');
+    await showsElementOnPage('.content code', 'TIL Code');
+    await showsElementOnPage(".category", "category");
+    await showsElementOnPage(".last-edited", "2018-11-11");
+  });
+
+  async function insertIntoContentStore(post) {
+    await testDb.insert(post);
   }
 
-  async function showsContentOnPage(expected) {
-    await page.goto(pageUrl);
-    await expect(page).toMatch(expected);
+  async function showsElementOnPage(selector, text) {
+    await expect(page).toMatchElement(selector, { text });
   }
 });

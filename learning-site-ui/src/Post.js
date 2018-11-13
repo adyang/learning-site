@@ -1,9 +1,18 @@
 import React from 'react';
+import Markdown from 'react-markdown';
 
-function Post({content}) {
+function Post({content, lastEditedDate, category}) {
   return (
-    <div className="content">
-      {content}
+    <div className="post">
+      <div className="content">
+        <Markdown source={content} />
+      </div>
+      <div className="last-edited">
+        {lastEditedDate}
+      </div>
+      <div className="category">
+        {category}
+      </div>
     </div>
   );
 }
