@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
     "react-markdown": "^4.0.3",
     "react-scripts": "2.1.1"
   },
@@ -16,8 +16,14 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "enzyme": "^3.4.4",
-    "enzyme-adapter-react-16": "^1.2.0"
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
