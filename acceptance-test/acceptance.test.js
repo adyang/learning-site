@@ -39,11 +39,33 @@ describe('Acceptance Test Criteria', () => {
     await showsElementOnPage(".last-edited", "2018-11-11");
   });
 
+  it('should show multiple TIL contents on page', async () => {
+    const contentOne = "# Title1\n```\nCode1\n```\n";
+    await insertIntoContentStore(
+      { id: "id1", content: contentOne, category: "category1", lastEditedDate: "2018-11-11" });
+    const contentTwo = "# Title2\n```\nCode2\n```\n";
+    await insertIntoContentStore(
+      { id: "id2", content: contentTwo, category: "category2", lastEditedDate: "2018-11-12" });
+
+    await page.goto(pageUrl);
+
+    await showsElementsOnPageWithTexts('.content h1', ['Title1', 'Title2']);
+    await showsElementsOnPageWithTexts('.content code', ['Code1', 'Code2']);
+    await showsElementsOnPageWithTexts('.category', ['category1', 'category2']);
+    await showsElementsOnPageWithTexts('.last-edited', ['2018-11-11', '2018-11-12']);
+  });
+
   async function insertIntoContentStore(post) {
     await testDb.insert(post);
   }
 
   async function showsElementOnPage(selector, text) {
-    await expect(page).toMatchElement(selector, { text });
+    await showsElementsOnPageWithTexts(selector, [text]);
+  }
+
+  async function showsElementsOnPageWithTexts(selector, expectedTexts) {
+    await expect(page).toMatchElement(selector);
+    const texts = await page.$$eval(selector, elems => elems.map(e => e.textContent));
+    expect(texts).toEqual(expectedTexts);
   }
 });

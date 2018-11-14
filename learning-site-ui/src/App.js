@@ -7,19 +7,27 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      post: null
+      posts: []
     };
   }
 
   async componentDidMount() {
-    const post = await contentFetcher.findPost();
-    this.setState({post});
+    try {
+      const posts = await contentFetcher.findAllPosts();
+      this.setState({posts});
+    } catch (e) {
+      console.error('Error finding posts: ', e);
+    }
   }
 
   render() {
     return (
       <div className="App">
-        <Post {...this.state.post} />
+        <main>
+          {this.state.posts.length
+            ? this.state.posts.map(p => <Post key={p.id} {...p} />)
+            : 'No posts found.'}
+        </main>
       </div>
     );
   }
