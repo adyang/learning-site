@@ -2,9 +2,14 @@ const express = require('express');
 const router = express.Router();
 const contentStore = require('./contentStore');
 
-router.post('/query', async (req, res) => {
-  const posts = await contentStore.findAllPosts();
-  res.json(posts);
-});
+function createRouter({ user, userPass: pass }) {
+  router.post('/query', async (req, res) => {
+    const posts = await contentStore.findAllPosts({ user, pass });
+    res.json(posts);
+  });
 
-module.exports = router;
+  return router;
+}
+
+
+module.exports = createRouter;

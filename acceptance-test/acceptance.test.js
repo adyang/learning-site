@@ -1,11 +1,17 @@
-const nano = require('nano')('http://localhost:5984');
+const nano = require('nano')({ url: 'http://localhost:5984', requestDefaults: { jar: true } });
+const dbConfig = require('config').get('couchDb');
 const pageUrl = `http://localhost:${process.env.CI ? 5000 : 3000}`;
 let testDb;
 
 beforeEach(async () => {
+  await nano.auth(dbConfig.admin, dbConfig.adminPass);
   await destroy('posts');
   await nano.db.create('posts');
   testDb = nano.use('posts');
+  await testDb.insert({
+    admins: { names: [], roles: [] },
+    members: { names: [""], roles: ["learning-site"] }
+  }, '_security');
 });
 
 async function destroy(dbName) {

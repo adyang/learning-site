@@ -1,4 +1,5 @@
-const nano = require('nano')('http://localhost:5984');
+const nano = require('nano')({ url: 'http://localhost:5984', requestDefaults: { jar: true } });
+const dbConfig = require('config').get('couchDb');
 const contentStore = require('./contentStore');
 
 describe('contentStore', () => {
@@ -6,9 +7,14 @@ describe('contentStore', () => {
   let postsDb;
 
   beforeEach(async () => {
+    await nano.auth(dbConfig.admin, dbConfig.adminPass);
     await destroy(POSTS_DB);
     await nano.db.create(POSTS_DB);
     postsDb = nano.db.use(POSTS_DB);
+    await postsDb.insert({
+      admins: { names: [], roles: [] },
+      members: { names: [""], roles: ["learning-site"] }
+    }, '_security');
   });
 
   async function destroy(dbName) {
@@ -20,7 +26,7 @@ describe('contentStore', () => {
     const posts = [{content: "postContentOne"}, {content: "postContentTwo"}];
     await postsDb.bulk({docs: posts});
 
-    const postsFound = await contentStore.findAllPosts();
+    const postsFound = await contentStore.findAllPosts({user: 'learning-site', pass: 'default'});
     const contentsOfPosts = postsFound.map(({content}) => ({content}));
 
     expect(contentsOfPosts).toEqual(posts);

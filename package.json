@@ -12,6 +12,7 @@
     "test:ci-acceptance": "CI=true start-server-and-test :5000 test:acceptance"
   },
   "dependencies": {
+    "config": "^3.0.0",
     "debug": "^4.1.0",
     "express": "^4.16.4",
     "http-errors": "^1.7.1",

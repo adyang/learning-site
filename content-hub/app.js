@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
+const config = require('config');
 
 const postsRouter = require('./postsRouter');
 
@@ -12,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../learning-site-ui/build')));
 
-app.use('/posts', postsRouter);
+app.use('/posts', postsRouter(config.get('couchDb')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
