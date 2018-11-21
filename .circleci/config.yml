@@ -67,15 +67,13 @@ jobs:
             - learning-site-ui/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{ checksum "learning-site-ui/package.json" }}
       - run:
-          name: setup-test-config
+          name: run-tests
           command: |
             export NODE_CONFIG=$(cat <<EOF
             { "couchDb": { "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
             EOF
             )
-      - run:
-          name: run-tests
-          command: npm test && npm run test:ui
+            npm test && npm run test:ui
       - run:
           name: install-chromium-dependencies-for-test
           command: |
@@ -87,7 +85,12 @@ jobs:
             xdg-utils wget
       - run:
           name: run-acceptance-tests
-          command: npm run build:ui && npm run test:ci-acceptance
+          command: |
+            export NODE_CONFIG=$(cat <<EOF
+            { "couchDb": { "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
+            EOF
+            )
+            npm run build:ui && npm run test:ci-acceptance
       - run: npm run build
       - run:
           name: package-app
