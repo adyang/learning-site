@@ -70,7 +70,7 @@ jobs:
           name: run-tests
           command: |
             export NODE_CONFIG=$(cat <<EOF
-            { "couchDb": { "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
+            { "couchDb": { "admin": "admin", "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
             EOF
             )
             npm test && npm run test:ui
@@ -87,7 +87,7 @@ jobs:
           name: run-acceptance-tests
           command: |
             export NODE_CONFIG=$(cat <<EOF
-            { "couchDb": { "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
+            { "couchDb": { "admin": "admin", "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
             EOF
             )
             npm run build:ui && npm run test:ci-acceptance
