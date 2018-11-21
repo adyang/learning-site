@@ -49,6 +49,8 @@ jobs:
             -H 'Content-Type: application/json' \
             -d '{ "name": "learning-site", "password": "$TEST_COUCHDB_USER_PASS", "roles": [ "learning-site" ], "type": "user" }' \
             -u admin:$TEST_COUCHDB_ADMIN_PASS
+            curl -X POST localhost:5984/_session -d "name=admin&password=$TEST_COUCHDB_ADMIN_PASS"
+            curl -X POST localhost:5984/_session -d "name=learning-site&password=$TEST_COUCHDB_USER_PASS"
       - checkout
       - run:
           name: update-npm
