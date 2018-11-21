@@ -1,3 +1,5 @@
 {
-  "_note": "Empty file to make node-config happy"
+  "couchDb": {
+    "admin": "admin"
+  }
 }

@@ -25,13 +25,30 @@ jobs:
           command: |
             sudo apt-get install apt-transport-https
             sudo apt-get update && sudo apt-get upgrade && sudo apt-get dist-upgrade
-            echo "couchdb couchdb/mode select none" | sudo debconf-set-selections
-            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --force-yes couchdb
+            bash -s <<'EOF' <(echo $TEST_COUCHDB_ADMIN_PASS)
+            password=$(< "$1")
+            echo "couchdb couchdb/mode select standalone
+            couchdb couchdb/mode seen true
+            couchdb couchdb/bindaddress string 127.0.0.1
+            couchdb couchdb/bindaddress seen true
+            couchdb couchdb/adminpass password $password
+            couchdb couchdb/adminpass seen true
+            couchdb couchdb/adminpass_again password $password
+            couchdb couchdb/adminpass_again seen true" | sudo debconf-set-selections
+            DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -q couchdb
+            EOF
       - run:
           name: Ensure CouchDB is started
           command: |
             timeout 5 bash -c 'until $(curl --output /dev/null --silent --fail http://localhost:5984/_up); do sleep 0.5; done' \
             || curl --fail http://localhost:5984/_up
+      - run:
+          name: Configure CouchDB learning-site user
+          command: |
+            curl -X PUT localhost:5984/_users/org.couchdb.user:learning-site \
+            -H 'Content-Type: application/json' \
+            -d '{ "name": "learning-site", "password": "$TEST_COUCHDB_USER_PASS", "roles": [ "learning-site" ], "type": "user" }' \
+            -u admin:$TEST_COUCHDB_ADMIN_PASS
       - checkout
       - run:
           name: update-npm
@@ -49,6 +66,13 @@ jobs:
             - node_modules
             - learning-site-ui/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}-{{ checksum "learning-site-ui/package.json" }}
+      - run:
+          name: setup-test-config
+          command: |
+            export NODE_CONFIG=$(cat <<EOF
+            { "couchDb": { "userPass": "$TEST_COUCHDB_USER_PASS", "adminPass": "$TEST_COUCHDB_ADMIN_PASS" } }
+            EOF
+            )
       - run:
           name: run-tests
           command: npm test && npm run test:ui
