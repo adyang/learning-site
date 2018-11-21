@@ -26,7 +26,7 @@ describe('contentStore', () => {
     const posts = [{content: "postContentOne"}, {content: "postContentTwo"}];
     await postsDb.bulk({docs: posts});
 
-    const postsFound = await contentStore.findAllPosts({user: 'learning-site', pass: 'default'});
+    const postsFound = await contentStore.findAllPosts({user: dbConfig.user, pass: dbConfig.userPass});
     const contentsOfPosts = postsFound.map(({content}) => ({content}));
 
     expect(contentsOfPosts).toEqual(posts);
