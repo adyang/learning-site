@@ -1,22 +1,36 @@
-#!/bin/bash
+#!/bin/bash -e
+
+ensure_databases_created() {
+    echo "Ensure required databases are created..."
+
+    result=$(curl -X PUT localhost:5984/posts --write-out %{http_code} \
+        --silent --show-error --output /tmp/couchdb-curl-out \
+        --config - <<< '-u admin:'"$1")
+
+    if (( $? > 0 )); then exit $?; fi
+
+    if (( result != 201 && result != 412 )); then
+        echo "Error in database creation request!" >&2
+        cat /tmp/couchdb-curl-out >&2
+        exit 1
+    fi
+
+    echo "Required databases created:"
+    curl --silent --show-error localhost:5984/_all_dbs
+}
+
+ensure_database_permissions_configured() {
+    echo -e "\nEnsure database permissions are configured..."
+    curl -X PUT localhost:5984/posts/_security --fail -H 'Content-Type: application/json' \
+    -d '{ "admins": { "names": [], "roles": [] }, "members": { "names": [], "roles": [ "learning-site" ] } }' \
+    --config - <<< '-u admin:'"$1"
+
+    echo "Database permissions:"
+    curl --silent --show-error localhost:5984/posts/_security \
+    --config - <<< '-u admin:'"$1"
+}
 
 echo -e "\n*** Configure CouchDB ***"
-echo "Ensure required databases are created..."
-
 couchdb_pass=$(cat -)
-result=$(echo "name=admin&password=$couchdb_pass" \
-    | curl --cookie-jar - --silent --show-error --output /dev/null \
-      -X POST localhost:5984/_session -d @- \
-    | curl --cookie @- --write-out %{http_code} --silent --show-error --output /tmp/couchdb-curl-out \
-      -X PUT localhost:5984/posts)
-
-if (( $? > 0 )); then exit $?; fi
-
-if (( result != 201 && result != 412 )); then
-    echo "Error in database creation request!" >&2
-    cat /tmp/couchdb-curl-out >&2
-    exit 1
-fi
-
-echo "Required databases created:"
-curl --silent --show-error localhost:5984/_all_dbs
+ensure_databases_created $couchdb_pass
+ensure_database_permissions_configured $couchdb_pass
