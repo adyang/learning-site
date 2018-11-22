@@ -32,7 +32,7 @@
     ```
     sudo -u app-user -i bash -i -c 'pm2 startup | tail -1' | bash
     ```
-2. Install CouchDB
+2. Install and configure CouchDB
     - Enable Apache CouchDB package repository
     ```
     (distribution=xenial; echo "deb https://apache.bintray.com/couchdb-deb ${distribution} main") \
@@ -49,7 +49,7 @@
     ```
     - Install CouchDB in standalone mode (Note: will only work with no indents for the heredoc)
     ```bash
-     bash -s <<'EOF' <(echo your-password)
+     bash -s <<'EOF' <(echo your-admin-password)
     PASSWORD=$(< "$1")
     echo "couchdb couchdb/mode select standalone
     couchdb couchdb/mode seen true
@@ -60,6 +60,15 @@
     couchdb couchdb/adminpass_again password $PASSWORD
     couchdb couchdb/adminpass_again seen true" | sudo debconf-set-selections
     DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -q couchdb
+    EOF
+    ```
+    - Create CouchDB app user
+    ```bash
+     bash -s <<'EOF' <(echo 'your-app-user-pass') <(echo 'your-admin-pass')
+    curl -X PUT localhost:5984/_users/org.couchdb.user:your-app-username \
+    -H 'Content-Type: application/json' \
+    -d '{ "name": "your-app-user-name", "password": "'$(cat "$1")'", "roles": [ "your-app-user-role" ], "type": "user" }' \
+    -u your-admin-username:$(cat "$2")
     EOF
     ```
 3. Install and configure Nginx
